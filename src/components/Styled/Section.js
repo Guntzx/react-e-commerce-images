@@ -1,11 +1,11 @@
 import styled from "styled-components"
 
 const Section = styled.section`
-    background-color: #eee;
+    background-color: #black;
     padding: 20px 25px;
     width: 500px;
-    box-shadow: 0px 2px 3px rgb(0,0,0,0.3);
     border-radius: 10px;
+    color: white;
 `
 
 export default Section

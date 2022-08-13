@@ -1,9 +1,10 @@
-import Login from './components/public/Login'
+import RouterApp from './routes/Routes'
+
 import './index.css'
 
 const App = () => {
   return (
-    <Login />
+    <RouterApp />
   ) 
 }
 

@@ -2,25 +2,25 @@ import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import Cookies from 'universal-cookie';
 import Container from "../Styled/Container";
 import Section from "../Styled/Section";
 import Input from "./Input";
 import Button from "../Styled/Button";
 import Tittle from "../Styled/Tittle";
-import { ErrorMessage } from "../Styled/Input";
 
-const Login = () => {
+const Register = () => {
+  const [statusRegister, setStatusRegister] = useState("");
   let navigate = useNavigate();
-  const cookies = new Cookies();
-  const [errorLogin, seterrorLogin] = useState("");
-  const handleSubmit = async ({ email, password }) => {
-    const response = await fetch("http://192.168.100.2:7000/login", {
+
+  const handleSubmit = async ({ name, lastname, email, password }) => {
+    const response = await fetch("http://192.168.100.2:7000/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        name: name,
+        lastname: lastname,
         email: email,
         password: password,
       }),
@@ -28,34 +28,41 @@ const Login = () => {
 
     const data = await response.json();
 
-    if(response.status !== 200) {
-      seterrorLogin(data.message)
+    if (response.status !== 200) {
+      setStatusRegister(data.message);
     } else {
-      cookies.set('access-token', data.token, { path: '/' });
-      navigate('/Home', {replace: true});
+      setStatusRegister(data.message);
     }
   };
 
-  const handleRegister = () => {
-    navigate("/Register", { replace: true });
-  }
+  const handleLogin = () => {
+    navigate("/", { replace: true });
+  };
 
   return (
     <Container>
       <Section>
         <Formik
           initialValues={{
+            name: "",
+            lastName: "",
             email: "",
             password: "",
           }}
           onSubmit={handleSubmit}
           validationSchema={Yup.object({
+            name: Yup.string().required("Obligatorio"),
+            lastname: Yup.string().required("Obligatorio"),
             email: Yup.string().required("Obligatorio"),
-            password: Yup.string().required("Obligatorio"),
+            password: Yup.string()
+              .required("Obligatorio")
+              .min(4, "Minimo 4 caracteres"),
           })}
         >
           <Form>
-            <Tittle>Inicia Sesion </Tittle>
+            <Tittle>Registrate</Tittle>
+            <Input name="name" label="Nombre" />
+            <Input name="lastname" label="Apellido" />
             <Input
               name="email"
               label="Correo"
@@ -68,18 +75,17 @@ const Login = () => {
               type="password"
               autocomplete="current-password"
             />
-            <ErrorMessage>{errorLogin}</ErrorMessage>
-            <Button type="submit">Iniciar Sesion</Button>
+            <Button type="submit">Registrarme</Button>
             <br />
+            {statusRegister}
           </Form>
         </Formik>
         <div>
-          <label>No tienes cuenta?</label>
-          <label onClick={handleRegister}> Registrate aqui</label>
+          <label onClick={handleLogin}> Volver</label>
         </div>
       </Section>
     </Container>
   );
 };
 
-export default Login;
+export default Register;
