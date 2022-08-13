@@ -5,7 +5,7 @@ export const Control = styled.div`
 `
 
 export const Label = styled.label`
-    color: white;
+    color: black;
     display: block;
     margin-bottom: 5px;
 `
