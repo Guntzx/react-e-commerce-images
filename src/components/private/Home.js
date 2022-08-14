@@ -38,7 +38,7 @@ const Home = () => {
 
     const response = await fetch(`https://api.unsplash.com/search/photos?per_page=20&query=${img}`,{
       headers: {
-        'Authorization': 'Client-ID 8LF9B5gNzRRn8DXLPE6xlm9OrYH7UXQ4bWnZlMuk5Qs'
+        'Authorization': 'your code authorization'
       }
     })
 
@@ -56,7 +56,7 @@ const Home = () => {
   const ImgsRandom = async () => {
     const response = await fetch(`https://api.unsplash.com/search/photos?per_page=20&query=random`,{
       headers: {
-        'Authorization': 'Client-ID 8LF9B5gNzRRn8DXLPE6xlm9OrYH7UXQ4bWnZlMuk5Qs'
+        'Authorization': 'your code authorization'
       }
     })
 
@@ -106,8 +106,8 @@ const Home = () => {
       </Navbar>
       <div className="container">
         <div className="center">
-          {img ? img : imgRandom}
-          {imgRandom ? imgRandom : img}
+          {img}
+          {imgRandom}
         </div>
       </div>
     </>

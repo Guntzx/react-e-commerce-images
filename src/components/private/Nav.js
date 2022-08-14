@@ -56,7 +56,7 @@ const NavScroll = () => {
             <Form className="d-flex">
               <Field
                 name="search"
-                //placeholder="Lluvia, paisaje, etc.."
+                placeholder="Lluvia, paisaje, etc.."
                 className="me-2"
               />
               <Button type="submit" variant="outline-success">Buscar</Button>
