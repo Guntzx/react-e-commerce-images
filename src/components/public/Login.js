@@ -75,7 +75,7 @@ const Login = () => {
         </Formik>
         <div>
           <label>No tienes cuenta?</label>
-          <label onClick={handleRegister}> Registrate aqui</label>
+          <label onClick={handleRegister}>Registrate aqui</label>
         </div>
       </Section>
     </Container>

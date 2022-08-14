@@ -6,13 +6,13 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
-import '../Styled/content.css';
-import '../Styled/article.css';
+import "../Styled/content.css";
+import "../Styled/article.css";
 
 const Home = () => {
   const [photos, setPhotos] = useState([]);
   const [randomPhotos, setRandomPhotos] = useState([]);
-  const open = url => window.open(url)
+  const open = (url) => window.open(url);
   const cookies = new Cookies();
   let navigate = useNavigate();
 
@@ -33,42 +33,92 @@ const Home = () => {
     navigate("/Purchased", { replace: true });
   };
 
+  const handleImg = (id, url, description) => {
+    console.log(id, url, description);
+  };
+
   const handleSubmit = async (values) => {
-    const img = values.search
+    const img = values.search;
 
-    const response = await fetch(`https://api.unsplash.com/search/photos?per_page=20&query=${img}`,{
-      headers: {
-        'Authorization': 'your code authorization'
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos?per_page=50&query=${img}`,
+      {
+        headers: {
+          Authorization:
+            "Your code auth here",
+        },
       }
-    })
+    );
 
-    const data = await response.json()
-    setPhotos(data.results)
+    const data = await response.json();
+    setPhotos(data.results);
   };
 
   const img = photos.map((photo) => (
-    <article key={photo.id} onClick={() => open(photo.links.html)}>
-      <img src={photo.urls.regular} />
-      <p>{[photo.description, photo.alt_description].join(" - ")}</p>
-    </article>
-  ))
+    <div>
+      <article key={photo.id}>
+        <img src={photo.urls.regular} onClick={() => open(photo.links.html)} />
+        <p>{[photo.description, photo.alt_description].join(" - ")}</p>
+      </article>
+      <button className="btn"
+        onClick={() =>
+          handleImg(photo.id, photo.urls.regular, photo.description)
+        }
+      >
+        Guardar
+      </button>
+      <button className="btn"
+        onClick={() =>
+          handleImg(photo.id, photo.urls.regular, photo.description)
+        }
+      >
+        Comprar
+      </button>
+    </div>
+  ));
 
   const ImgsRandom = async () => {
-    const response = await fetch(`https://api.unsplash.com/search/photos?per_page=20&query=random`,{
-      headers: {
-        'Authorization': 'your code authorization'
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos?per_page=50&query=random`,
+      {
+        headers: {
+          Authorization:
+          "Your code auth here",
+        },
       }
-    })
+    );
 
-    const data = await response.json()
-    setRandomPhotos(data.results)
-  }
+    const data = await response.json();
+    setRandomPhotos(data.results);
+  };
 
-  ImgsRandom()
+  ImgsRandom();
 
-  const imgRandom = randomPhotos.map((rPhotos) =>(<article key={rPhotos.id} onClick={() => open(rPhotos.links.html)}>
-  <img src={rPhotos.urls.regular} />
-  <p>{[rPhotos.description, rPhotos.alt_description].join(" - ")}</p></article>))
+  const imgRandom = randomPhotos.map((rPhotos) => (
+    <div>
+      <article key={rPhotos.id}>
+        <img
+          src={rPhotos.urls.regular}
+          onClick={() => open(rPhotos.links.html)}
+        />
+        <p>{[rPhotos.description, rPhotos.alt_description].join(" - ")}</p>
+      </article>
+      <button className="btn"
+        onClick={() =>
+          handleImg(rPhotos.id, rPhotos.urls.regular, rPhotos.description)
+        }
+      >
+        Guardar
+      </button>
+      <button className="btn"
+        onClick={() =>
+          handleImg(rPhotos.id, rPhotos.urls.regular, rPhotos.description)
+        }
+      >
+        Comprar
+      </button>
+    </div>
+  ));
 
   return (
     <>
@@ -104,6 +154,9 @@ const Home = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <div className="containerLabel">
+        <label className="label">Bienvenida/o </label>
+      </div>
       <div className="container">
         <div className="center">
           {img}
