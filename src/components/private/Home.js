@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { Formik, Form, Field } from "formik";
+import useFetch from "../../hooks/useFetchUser";
+import useFetchImg from "../../hooks/useFetchImg";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -11,41 +13,41 @@ import "../Styled/article.css";
 
 const Home = () => {
   const [photos, setPhotos] = useState([]);
-  const [randomPhotos, setRandomPhotos] = useState([]);
+  const [statusImg, setStatusImg] = useState("");
+  const { data } = useFetch();
+  const imgs = useFetchImg();
   const open = (url) => window.open(url);
   const cookies = new Cookies();
   let navigate = useNavigate();
 
-  const handleHome = () => {
-    navigate("/Home", { replace: true });
-  };
+  const handleImg = async (id, url, description) => {
+    const token = cookies.get("access-token");
 
-  const handleLogin = () => {
-    cookies.remove("access-token", { path: "/" });
-    navigate("/", { replace: true });
-  };
+    const response = await fetch("http://192.168.100.2:7000/img/save", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        img_id: id,
+        img_url: url,
+        img_description: description,
+      }),
+    });
 
-  const handleSave = () => {
-    navigate("/Saved", { replace: true });
-  };
+    const result = await response.json();
 
-  const handlePurchased = () => {
-    navigate("/Purchased", { replace: true });
-  };
-
-  const handleImg = (id, url, description) => {
-    console.log(id, url, description);
+    setStatusImg(result.message);
   };
 
   const handleSubmit = async (values) => {
-    const img = values.search;
-
     const response = await fetch(
-      `https://api.unsplash.com/search/photos?per_page=50&query=${img}`,
+      `https://api.unsplash.com/search/photos?per_page=50&query=${values.search}`,
       {
         headers: {
           Authorization:
-            "Your code auth here",
+            "Your Auth",
         },
       }
     );
@@ -55,19 +57,21 @@ const Home = () => {
   };
 
   const img = photos.map((photo) => (
-    <div>
-      <article key={photo.id}>
+    <div key={photo.id}>
+      <article>
         <img src={photo.urls.regular} onClick={() => open(photo.links.html)} />
         <p>{[photo.description, photo.alt_description].join(" - ")}</p>
       </article>
-      <button className="btn"
+      <button
+        className="btn"
         onClick={() =>
           handleImg(photo.id, photo.urls.regular, photo.description)
         }
       >
         Guardar
       </button>
-      <button className="btn"
+      <button
+        className="btn"
         onClick={() =>
           handleImg(photo.id, photo.urls.regular, photo.description)
         }
@@ -77,40 +81,25 @@ const Home = () => {
     </div>
   ));
 
-  const ImgsRandom = async () => {
-    const response = await fetch(
-      `https://api.unsplash.com/search/photos?per_page=50&query=random`,
-      {
-        headers: {
-          Authorization:
-          "Your code auth here",
-        },
-      }
-    );
-
-    const data = await response.json();
-    setRandomPhotos(data.results);
-  };
-
-  ImgsRandom();
-
-  const imgRandom = randomPhotos.map((rPhotos) => (
-    <div>
-      <article key={rPhotos.id}>
+  const imgRandom = imgs.map((rPhotos) => (
+    <div key={rPhotos.id}>
+      <article>
         <img
           src={rPhotos.urls.regular}
           onClick={() => open(rPhotos.links.html)}
         />
         <p>{[rPhotos.description, rPhotos.alt_description].join(" - ")}</p>
       </article>
-      <button className="btn"
+      <button
+        className="btn"
         onClick={() =>
           handleImg(rPhotos.id, rPhotos.urls.regular, rPhotos.description)
         }
       >
         Guardar
       </button>
-      <button className="btn"
+      <button
+        className="btn"
         onClick={() =>
           handleImg(rPhotos.id, rPhotos.urls.regular, rPhotos.description)
         }
@@ -125,7 +114,13 @@ const Home = () => {
       <Navbar bg="light" expand="lg">
         <Container fluid>
           <Navbar.Brand>
-            <Nav.Link onClick={handleHome}>Image e-commerce</Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                navigate("/Home");
+              }}
+            >
+              Image e-commerce
+            </Nav.Link>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -134,16 +129,41 @@ const Home = () => {
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
-              <Nav.Link onClick={handleHome}>Inicio</Nav.Link>
-              <Nav.Link onClick={handleSave}>Imgenes guardadas</Nav.Link>
-              <Nav.Link onClick={handlePurchased}>Imgenes compradas</Nav.Link>
-              <Nav.Link onClick={handleLogin}>Cerrar sesion</Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/Home");
+                }}
+              >
+                Inicio
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/Saved");
+                }}
+              >
+                Imagenes guardadas
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  navigate("/Purchased");
+                }}
+              >
+                Imagenes compradas
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  cookies.remove("access-token", { path: "/" });
+                  navigate("/", { replace: true });
+                }}
+              >
+                Cerrar sesion
+              </Nav.Link>
             </Nav>
             <Formik initialValues={{ search: "" }} onSubmit={handleSubmit}>
               <Form className="d-flex">
                 <Field
                   name="search"
-                  //placeholder="Lluvia, paisaje, etc.."
+                  placeholder="Lluvia, paisaje, etc.."
                   className="me-2"
                 />
                 <Button type="submit" variant="outline-success">
@@ -155,12 +175,13 @@ const Home = () => {
         </Container>
       </Navbar>
       <div className="containerLabel">
-        <label className="label">Bienvenida/o </label>
+        <label className="label">Bienvenida/o {data}</label>
       </div>
+
       <div className="container">
         <div className="center">
-          {img}
-          {imgRandom}
+          <label> {statusImg}</label>
+          {photos.length > 0 ? img : imgRandom}
         </div>
       </div>
     </>
