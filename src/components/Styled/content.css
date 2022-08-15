@@ -29,3 +29,18 @@
 .btn {
     margin-inline: 50px;
 }
+
+.containerPAY {
+    display: flex;
+    background-color: #eee;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.centerPAY {
+    display: flex;
+    width: 1200px;
+    height: 1200px;
+    justify-content: center;
+    
+}

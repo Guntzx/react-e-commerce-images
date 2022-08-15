@@ -2,9 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import useFetch from "../../hooks/useFetchUser";
 import useFetchImgGet from "../../hooks/useFetchImgGet";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import BarNav from "./Nav";
 import "../Styled/content.css";
 import "../Styled/article.css";
 
@@ -13,25 +11,30 @@ const SaveImg = () => {
   const imgs = useFetchImgGet();
   const cookies = new Cookies();
   let navigate = useNavigate();
+  const precio_random = Math.floor(Math.random() * 100000) + 1001;
 
-  const handleImg = async (id, url, description) => {
+  const handlePayment = async (id, amount, url_img, img_description) => {
     const token = cookies.get("access-token");
-
-    const response = await fetch("http://192.168.100.2:7000/img/save", {
+    
+    const response = await fetch("http://192.168.100.2:7000/img/buy", {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: "Bearer "+ token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        img_id: id,
-        img_url: url,
-        img_description: description,
-      }),
-    });
+        buyOrder: id,
+        amount: amount,
+        returnUrl: "http://192.168.100.2:7000/transaction"
+      })
+    })
 
     const result = await response.json();
-  };
+
+    //console.log(result)
+
+    navigate("/Payments", { state: {tokenT: result.token, url: result.url, id_img: id, img_url: url_img, img_description: img_description, amount: amount} })
+  }
 
   const img = imgs.map((p) => (
     <div key={p.img_id}>
@@ -44,7 +47,7 @@ const SaveImg = () => {
       <button
         className="btn"
         onClick={() =>
-          handleImg(p.img_id, p.img_url, p.img_description)
+          handlePayment(p.img_id, precio_random, p.img_url, p.img_description)
         }
       >
         Comprar
@@ -54,57 +57,7 @@ const SaveImg = () => {
 
   return (
     <>
-      <Navbar bg="light" expand="lg">
-        <Container fluid>
-          <Navbar.Brand>
-            <Nav.Link
-              onClick={() => {
-                navigate("/Home");
-              }}
-            >
-              Image e-commerce
-            </Nav.Link>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: "100px" }}
-              navbarScroll
-            >
-              <Nav.Link
-                onClick={() => {
-                  navigate("/Home");
-                }}
-              >
-                Inicio
-              </Nav.Link>
-              <Nav.Link
-                onClick={() => {
-                  navigate("/Saved");
-                }}
-              >
-                Imagenes guardadas
-              </Nav.Link>
-              <Nav.Link
-                onClick={() => {
-                  navigate("/Purchased");
-                }}
-              >
-                Imagenes compradas
-              </Nav.Link>
-              <Nav.Link
-                onClick={() => {
-                  cookies.remove("access-token", { path: "/" });
-                  navigate("/", { replace: true });
-                }}
-              >
-                Cerrar sesion
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <BarNav />
       <div className="containerLabel">
         <label className="label">Estas son tus Imagenes guardadas {data}</label>
       </div>

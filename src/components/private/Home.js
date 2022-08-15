@@ -19,6 +19,7 @@ const Home = () => {
   const open = (url) => window.open(url);
   const cookies = new Cookies();
   let navigate = useNavigate();
+  const precio_random = Math.floor(Math.random() * 100000) + 1001;
 
   const handleImg = async (id, url, description) => {
     const token = cookies.get("access-token");
@@ -41,13 +42,34 @@ const Home = () => {
     setStatusImg(result.message);
   };
 
+  const handlePayment = async (id, amount, url_img, img_description) => {
+    const token = cookies.get("access-token");
+    
+    const response = await fetch("http://192.168.100.2:7000/img/buy", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer "+ token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        buyOrder: id,
+        amount: amount,
+        returnUrl: "http://192.168.100.2:7000/transaction"
+      })
+    })
+
+    const result = await response.json();
+
+    navigate("/Payments", { state: {tokenT: result.token, url: result.url, id_img: id, img_url: url_img, img_description: img_description, amount: amount} })
+  }
+
   const handleSubmit = async (values) => {
     const response = await fetch(
       `https://api.unsplash.com/search/photos?per_page=50&query=${values.search}`,
       {
         headers: {
           Authorization:
-            "Your Auth",
+            "Client-ID 8LF9B5gNzRRn8DXLPE6xlm9OrYH7UXQ4bWnZlMuk5Qs",
         },
       }
     );
@@ -61,6 +83,7 @@ const Home = () => {
       <article>
         <img src={photo.urls.regular} onClick={() => open(photo.links.html)} />
         <p>{[photo.description, photo.alt_description].join(" - ")}</p>
+        <label className="label">Precio: ${precio_random}</label>
       </article>
       <button
         className="btn"
@@ -73,7 +96,7 @@ const Home = () => {
       <button
         className="btn"
         onClick={() =>
-          handleImg(photo.id, photo.urls.regular, photo.description)
+          handlePayment(photo.id, precio_random, photo.urls.regular, photo.description)
         }
       >
         Comprar
@@ -89,6 +112,7 @@ const Home = () => {
           onClick={() => open(rPhotos.links.html)}
         />
         <p>{[rPhotos.description, rPhotos.alt_description].join(" - ")}</p>
+        <label className="label">Precio: ${precio_random}</label>
       </article>
       <button
         className="btn"
@@ -101,7 +125,7 @@ const Home = () => {
       <button
         className="btn"
         onClick={() =>
-          handleImg(rPhotos.id, rPhotos.urls.regular, rPhotos.description)
+          handlePayment(rPhotos.id, precio_random, rPhotos.urls.regular, rPhotos.description)
         }
       >
         Comprar

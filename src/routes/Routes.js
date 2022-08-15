@@ -6,6 +6,8 @@ import PrivateRoute from './PrivateRoutes'
 import PublicRoute from './PublicRoutes' 
 import PurchasedImg from '../components/private/PurchasedImg'
 import SavedImg from '../components/private/SavedImg'
+import Payments from '../components/private/Payments'
+import Status from '../components/private/Status'
 
 const RouterApp = () => {
     return (
@@ -15,6 +17,8 @@ const RouterApp = () => {
             <Route path="Register" element={<PublicRoute><Register /></PublicRoute>} />
             <Route path="Purchased" element={<PrivateRoute> <PurchasedImg /> </PrivateRoute>} />
             <Route path="Saved" element={<PrivateRoute> <SavedImg /> </PrivateRoute>} />
+            <Route path="Payments" element={<PrivateRoute> <Payments /> </PrivateRoute>} />
+            <Route path="Status" element={<PrivateRoute> <Status /> </PrivateRoute>} />
             <Route path="*" element={<h1>ERROR 404 Not Found</h1>} />
         </Routes>
     )
