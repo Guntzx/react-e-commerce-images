@@ -4,7 +4,7 @@ const useFetchImg = (img) => {
   const imgquery = img || "random";
   const [data, setData] = useState([]);
   const url = `https://api.unsplash.com/search/photos?per_page=20&query=${imgquery}`;
-  const auth = "Client-ID 8LF9B5gNzRRn8DXLPE6xlm9OrYH7UXQ4bWnZlMuk5Qs";
+  const auth = "Your Auth";
 
   useEffect(() => {
     const fetchData = async () => {

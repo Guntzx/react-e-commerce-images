@@ -54,7 +54,8 @@ const Home = () => {
       body: JSON.stringify({
         buyOrder: id,
         amount: amount,
-        returnUrl: "http://192.168.100.2:7000/transaction"
+        returnUrl: "http://192.168.100.2:7000/confirm/transaction",
+        ObjectBuy: url_img
       })
     })
 
@@ -69,7 +70,7 @@ const Home = () => {
       {
         headers: {
           Authorization:
-            "Client-ID 8LF9B5gNzRRn8DXLPE6xlm9OrYH7UXQ4bWnZlMuk5Qs",
+            "Your Auth",
         },
       }
     );

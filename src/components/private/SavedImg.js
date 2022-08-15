@@ -25,7 +25,8 @@ const SaveImg = () => {
       body: JSON.stringify({
         buyOrder: id,
         amount: amount,
-        returnUrl: "http://192.168.100.2:7000/transaction"
+        returnUrl: "http://192.168.100.2:7000/confirm/transaction",
+        ObjectBuy: url_img
       })
     })
 
@@ -43,6 +44,7 @@ const SaveImg = () => {
           src={p.img_url}
         />
         <p>{[p.img_description].join(" - ")}</p>
+        <label className="label">Precio: ${precio_random}</label>
       </article>
       <button
         className="btn"
@@ -64,7 +66,7 @@ const SaveImg = () => {
 
       <div className="container">
         <div className="center">
-          {imgs.length > 0 ? img : <label className="label">Aun no tienes imgenes guardadas</label>}
+          {imgs.length > 0 ? img : <label className="label">Aun no tienes imagenes guardadas</label>}
         </div>
       </div>
     </>
