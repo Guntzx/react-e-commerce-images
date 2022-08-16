@@ -8,15 +8,30 @@ const PurchasedImg = () => {
   const { data } = useFetch();
   const imgs = useFetchImgBuy();
 
-  const handleDownload = (id) => {
-    console.log(id);
+  const handleDownload = (src) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
+    img.onload = () => {
+      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      
+      const a = document.createElement("a");
+      a.download = "download.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
   };
 
   const img = imgs.map((p) => (
     <div key={p.id_img}>
       <article>
         <img src={p.url_img} />
-        <button className="btn" onClick={() => handleDownload(p.id_img)}>
+        <button className="btn" onClick={() => handleDownload(p.url_img)}>
           Descargar Imagen
         </button>
       </article>

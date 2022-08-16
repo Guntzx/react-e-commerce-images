@@ -15,8 +15,23 @@ const Status = () => {
   const navigate = useNavigate()
   const { data } = useFetch();
 
-  const handleDownload = (id) => {
-    console.log(id)
+  const handleDownload = (src) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
+    img.onload = () => {
+      
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      
+      const a = document.createElement("a");
+      a.download = "download.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
   }
 
   return (
@@ -37,7 +52,7 @@ const Status = () => {
               <button
               className="btn"
               onClick={() =>
-                handleDownload(img_id)
+                handleDownload(img_url)
               }
             >
               Descargar Imagen
