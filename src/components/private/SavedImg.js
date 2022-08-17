@@ -15,34 +15,55 @@ const SaveImg = () => {
 
   const handlePayment = async (id, amount, url_img, img_description) => {
     const token = cookies.get("access-token");
-    
     const response = await fetch("http://192.168.100.2:7000/img/buy", {
       method: "POST",
       headers: {
-        Authorization: "Bearer "+ token,
+        Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         buyOrder: id,
         amount: amount,
         returnUrl: "http://192.168.100.2:7000/confirm/transaction",
-        ObjectBuy: url_img
-      })
-    })
+        ObjectBuy: url_img,
+      }),
+    });
 
     const result = await response.json();
 
-    //console.log(result)
+    navigate("/Payments", {
+      state: {
+        tokenT: result.token,
+        url: result.url,
+        id_img: id,
+        img_url: url_img,
+        img_description: img_description,
+        amount: amount,
+      },
+    });
+  };
 
-    navigate("/Payments", { state: {tokenT: result.token, url: result.url, id_img: id, img_url: url_img, img_description: img_description, amount: amount} })
-  }
+  const handleDelete = async (id) => {
+    const token = cookies.get("access-token");
+
+    await fetch("http://192.168.100.2:7000/img/save/delete", {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id_img: id,
+      }),
+    });
+
+    navigate(0);
+  };
 
   const img = imgs.map((p) => (
     <div key={p.img_id}>
       <article>
-        <img
-          src={p.img_url}
-        />
+        <img src={p.img_url} />
         <p>{[p.img_description].join(" - ")}</p>
         <label className="label">Precio: ${precio_random}</label>
       </article>
@@ -53,6 +74,9 @@ const SaveImg = () => {
         }
       >
         Comprar
+      </button>
+      <button className="btn" onClick={() => handleDelete(p.img_id)}>
+        Eliminar
       </button>
     </div>
   ));
@@ -66,7 +90,11 @@ const SaveImg = () => {
 
       <div className="container">
         <div className="center">
-          {imgs.length > 0 ? img : <label className="label">Aun no tienes imagenes guardadas</label>}
+          {imgs.length > 0 ? (
+            img
+          ) : (
+            <label className="label">Aun no tienes imagenes guardadas</label>
+          )}
         </div>
       </div>
     </>
